@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Map with Sidebar</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 94vh;
+            width: calc(100vw - 350px);
+        }
+
+        #sidebar {
+            text-align: right;
+            height: 94vh;
+            width: 350px;
+            position: fixed;
+            top: 8px;
+            right: 8px;
+            background: #fff;
+            z-index: 2000;
+            transition: right 0.3s;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            background-color: #4682B4;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .sidebar-header h2 {
+            text-align: center;
+            margin: 5px;
+            flex-grow: 1;
+        }
+
+        .close-btn {
+            font-size: 36px;
+            cursor: pointer;
+        }
+
+        .sidebar-content {
+            padding: 18px;
+        }
+
+        .sidebar-content .details {
+            display: none;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-content .details.active {
+            display: block;
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 10px;
+        }
+
+        .sidebar-tab {
+            flex-grow: 1;
+            text-align: center;
+            cursor: pointer;
+            padding: 10px 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .sidebar-tab.active {
+            border-bottom-color: #4682B4;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <h2>Title</h2>
+            <span class="close-btn" onclick="closeSidebar()">&times;</span>
+        </div>
+        <div class="sidebar-tabs">
+            <div class="sidebar-tab active" onclick="showTab('identification')">تعريف</div>
+            <div class="sidebar-tab" onclick="showTab('description')">وصف</div>
+            <div class="sidebar-tab" onclick="showTab('photos')">صور</div>
+        </div>
+        <div class="sidebar-content">
+            <div id="identification" class="details active">
+            </div>
+            <div id="description" class="details">
+            </div>
+            <div id="photos" class="details">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map', {
+            center: [32.8833, -6.9000],
+            zoom: 5.3,
+            minZoom: 5.3,
+            maxBounds: [
+                [24.0000, -30.0000],
+                [40.0000, 40.0000] 
+            ],
+            maxBoundsViscosity: 1.0
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        function openSidebar() {
+            document.getElementById('sidebar').style.right = '0';
+            document.getElementById('map').style.width = 'calc(100vw - 350px)';
+            map.invalidateSize(); 
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').style.right = '-350px';
+            document.getElementById('map').style.width = '100vw';
+            map.invalidateSize(); 
+        }
+
+
+        function showTab(tabId) {
+            document.querySelectorAll('.details').forEach(function (tabContent) {
+                tabContent.classList.remove('active');
+            });
+            document.querySelectorAll('.sidebar-tab').forEach(function (tab) {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector('.sidebar-tab[onclick="showTab(\'' + tabId + '\')"]').classList.add('active');
+        }
+
+        var locations = [
+            { 'name': 'Tameslouht', 'coordinates': [31.4965866, -8.098177], 'identification': 'Identification for Tameslouht', 'description': '<details to be added later>', 'photo': '' },
+            { 'name': 'Moulay Brahim', 'coordinates': [31.2855219, -7.966824399999998], 'identification': 'Identification for Moulay Brahim', 'description': '<Details to be added later>', 'photo': '' },
+            { 'name': "M'Zouda", 'coordinates': [31.2918394, -8.5854229], 'identification': "Identification for M'Zouda", 'description': 'Description not available', 'photo': '' },
+            { 'name': 'Ifennsa', 'coordinates': [31.2533124, -8.5498595], 'identification': 'Identification for Ifennsa', 'description': 'Description not available', 'photo': '' },
+            { 'name': 'سايس', 'coordinates': [31.791702, -7.092619999999998], 'identification': 'Identification for سايس', 'description': 'Description not available', 'photo': '' },
+            { 'name': 'Tazzarine', 'coordinates': [30.7717757, -5.545978700000001], 'identification': 'Identification for Tazzarine', 'description': 'Description not available', 'photo': '' },
+            { 'name': 'Meknes', 'coordinates': [33.8730164, -5.5407299], 'identification': 'Identification for Meknes', 'description': 'Description not available', 'photo': '' },
+            { 'name': 'Bzou', 'coordinates': [32.0860889, -7.0552218], 'identification': 'Identification for Bzou', 'description': 'Description not available', 'photo': '' },
+            { 'name': 'جوهرة ازعير', 'coordinates': [33.8340431, -6.921847400000001], 'identification': 'Identification for جوهرة ازعير', 'description': 'Description not available', 'photo': '' },
+            { 'name': 'Sidi Ahmed El Khadir', 'coordinates': [32.5191467, -7.347604800000001], 'identification': 'Identification for Sidi Ahmed El Khadir', 'description': 'Description not available', 'photo': '' },
+            { 'name': 'Ben Slimane', 'coordinates': [33.4992008, -7.179025999999999], 'identification': 'Identification for Ben Slimane', 'description': 'Description not available', 'photo': '' },
+            { 'name': 'Chbika', 'coordinates': [28.183333, -11.166667], 'identification': 'Identification for Chbika', 'description': 'Description not available', 'photo': '' },
+            { 'name': 'Assoul', 'coordinates': [31.9501627, -5.2097047], 'identification': 'Identification for Assoul', 'description': 'Description not available', 'photo': '' },
+            { 'name': 'Ait Aissi Ihahane', 'coordinates': [30.9140747, -9.4242147], 'identification': 'Identification for Ait Aissi Ihahane', 'description': 'Description not available', 'photo': '' },
+            { 'name': 'Settat Province', 'coordinates': [32.6883945, -7.265285799999999], 'identification': 'Identification for Settat Province', 'description': 'Description not available', 'photo': '' }
+        ];
+    
+
+        locations.forEach(function (location) {
+            var marker = L.marker(location.coordinates).addTo(map);
+            marker.on('click', function () {
+                document.querySelector('#identification').innerHTML = location.identification;
+                document.querySelector('#description').innerHTML = location.description;
+                document.querySelector('#photos').innerHTML = '<img src="' + location.photo + '" alt="Photo" style="width:100%;">';
+                openSidebar();
+                document.querySelector('.sidebar-header h2').textContent = location.name;
+                showTab('identification');
+            });
+        });
+
+        closeSidebar();
+
+    </script>
+</body>
+
+</html>
